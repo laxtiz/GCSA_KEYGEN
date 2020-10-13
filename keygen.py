@@ -12,6 +12,7 @@ def get_volume_serial_number(root_path_name: str = "C:\\") -> int:
     """
     获取逻辑卷序列号
     """
+    assert sys.platform == 'win32'
     from ctypes import POINTER, byref, c_bool, c_int, c_uint, c_wchar_p, windll
 
     f = windll.kernel32.GetVolumeInformationW
@@ -92,22 +93,40 @@ def calc_registration_code(serial_number: str) -> str:
     return None
 
 
-def main():
-    if len(sys.argv) == 1:
+def print_help_then_exit():
+    print("非Windows 系统只能根据序列号计算注册码，不能获取默认序列号以及注册码。")
+    sys.exit(-1)
+
+
+def print_sn_and_rc(cipher_sn: str = None):
+    if cipher_sn is None:
         plain_sn = default_serial_number()
-        sn = encrypt(plain_sn)
+        cipher_sn = encrypt(plain_sn)
     else:
-        sn = "".join(sys.argv[1:])
-        plain_sn = decrypt(sn)
+        plain_sn = decrypt(cipher_sn)
 
-    print(f"序列号：{sn}")
-
-    if plain_sn:
-        plain_rc = calc_registration_code(plain_sn)
-        rc = encrypt(plain_rc)
-        print(f"注册码：{rc}")
-    else:
+    if plain_sn is None:
         print("序列号无法识别！")
+        return
+
+    plain_rc = calc_registration_code(plain_sn)
+    cipher_rc = encrypt(plain_rc)
+
+    print(f"序列号：{cipher_sn}")
+    print(f"注册码：{cipher_rc}")
+
+
+def main():
+    if len(sys.argv) != 1:
+        cipher_sn = "".join(sys.argv[1:])
+        print_sn_and_rc(cipher_sn)
+        return
+
+    if sys.platform == "win32":
+        print_sn_and_rc()
+        return
+
+    print_help_then_exit()
 
 
 if __name__ == "__main__":
