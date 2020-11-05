@@ -33,22 +33,19 @@
 
 ### 准备
 1. 创建virtualenv 虚拟环境
-    ```sh
-    python -m venv env
-    ```
-
-2. 激活虚拟环境
     - for Linux:
         ```sh
-        ./env/bin/activate
+        python -m venv venv
+        source ./venv/bin/activate
         ```
 
     - for Windows:
-        ```sh
-        ./env/Scripts/activate
+        ```powershell
+        py -m venv venv
+        .\venv\Scripts\activate
         ```
 
-3. 安装需求库
+2. 安装需求库
     ```sh
     python -m pip install --upgrade pip wheel setuptools
     python -m pip install -r requirements.txt
