@@ -88,9 +88,7 @@ def calc_registration_code(serial_number: str) -> str:
     """
     获取注册码（明码）
     """
-    if serial_number:
-        return serial_number + MAGIC_SUFFIX
-    return None
+    return serial_number + MAGIC_SUFFIX if serial_number else None
 
 
 def print_help_then_exit():
